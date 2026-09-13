@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "dgSpecHash": "ahKKz2yQc/8=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Mr. Adham\\OrderFlow\\src\\OrderFlow.Application\\OrderFlow.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\dapper\\2.1.86\\dapper.2.1.86.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\fluentvalidation\\12.1.1\\fluentvalidation.12.1.1.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\12.1.1\\fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\mediatr\\12.5.0\\mediatr.12.5.0.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\mediatr.contracts\\2.0.1\\mediatr.contracts.2.0.1.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.entityframeworkcore\\9.0.20\\microsoft.entityframeworkcore.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\9.0.20\\microsoft.entityframeworkcore.abstractions.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\9.0.20\\microsoft.entityframeworkcore.analyzers.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\9.0.20\\microsoft.extensions.caching.abstractions.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.extensions.caching.memory\\9.0.20\\microsoft.extensions.caching.memory.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\9.0.20\\microsoft.extensions.dependencyinjection.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\9.0.20\\microsoft.extensions.dependencyinjection.abstractions.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.extensions.logging\\9.0.20\\microsoft.extensions.logging.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\9.0.20\\microsoft.extensions.logging.abstractions.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.extensions.options\\9.0.20\\microsoft.extensions.options.9.0.20.nupkg.sha512",
+    "C:\\Users\\Mr. Adham\\.nuget\\packages\\microsoft.extensions.primitives\\9.0.20\\microsoft.extensions.primitives.9.0.20.nupkg.sha512"
+  ],
+  "logs": []
+}

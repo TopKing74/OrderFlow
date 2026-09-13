@@ -1,0 +1,11 @@
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\bin\Debug\net9.0\OrderFlow.Domain.deps.json
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\bin\Debug\net9.0\OrderFlow.Domain.dll
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\bin\Debug\net9.0\OrderFlow.Domain.pdb
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\obj\Debug\net9.0\OrderFlow.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\obj\Debug\net9.0\OrderFlow.Domain.AssemblyInfoInputs.cache
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\obj\Debug\net9.0\OrderFlow.Domain.AssemblyInfo.cs
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\obj\Debug\net9.0\OrderFlow.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\obj\Debug\net9.0\OrderFlow.Domain.dll
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\obj\Debug\net9.0\refint\OrderFlow.Domain.dll
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\obj\Debug\net9.0\OrderFlow.Domain.pdb
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Domain\obj\Debug\net9.0\ref\OrderFlow.Domain.dll
