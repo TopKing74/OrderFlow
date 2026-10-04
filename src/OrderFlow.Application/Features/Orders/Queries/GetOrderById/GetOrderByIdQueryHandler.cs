@@ -1,5 +1,6 @@
 using Dapper;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using OrderFlow.Application.Common.Caching;
 using OrderFlow.Application.Common.Exceptions;
 using OrderFlow.Application.Common.Interfaces;
@@ -9,7 +10,8 @@ namespace OrderFlow.Application.Features.Orders.Queries.GetOrderById;
 
 public sealed class GetOrderByIdQueryHandler(
     ISqlConnectionFactory sqlConnectionFactory,
-    ICacheService cacheService)
+    ICacheService cacheService,
+    ILogger<GetOrderByIdQueryHandler> logger)
     : IRequestHandler<GetOrderByIdQuery, OrderDetailsDto>
 {
     private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(5);
@@ -22,8 +24,11 @@ public sealed class GetOrderByIdQueryHandler(
 
         if (cached is not null)
         {
+            logger.LogInformation("Cache {CacheStatus} for Order {OrderId}", "HIT", request.Id);
             return cached;
         }
+
+        logger.LogInformation("Cache {CacheStatus} for Order {OrderId}", "MISS", request.Id);
 
         const string sql = """
             SELECT [Id], [CustomerName], [Status], [TotalAmount], [CreatedAtUtc]

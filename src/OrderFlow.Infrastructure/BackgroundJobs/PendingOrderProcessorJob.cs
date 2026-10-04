@@ -9,6 +9,7 @@ namespace OrderFlow.Infrastructure.BackgroundJobs;
 
 public sealed class PendingOrderProcessorJob(
     IServiceScopeFactory scopeFactory,
+    IOrderFlowTelemetry telemetry,
     ILogger<PendingOrderProcessorJob> logger)
     : BackgroundService
 {
@@ -77,17 +78,39 @@ public sealed class PendingOrderProcessorJob(
             return;
         }
 
+        logger.LogInformation("Background Worker started processing {Count} pending orders", pendingOrders.Count);
+
+        var successfullyProcessed = 0;
+
         foreach (var order in pendingOrders)
         {
-            order.MarkCompleted();
+            try
+            {
+                order.MarkCompleted();
+                telemetry.PendingOrdersCount.Add(-1);
+                telemetry.WorkerProcessedOrdersTotal.Add(1);
+                successfullyProcessed++;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(
+                    ex,
+                    "Failed to transition status for Order {OrderId} from {CurrentStatus} to {TargetStatus}",
+                    order.Id,
+                    order.Status,
+                    OrderStatus.Completed);
+            }
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        if (successfullyProcessed > 0)
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation(
-            "Marked {OrderCount} pending order(s) as {Status} (max batch size: {BatchSize}).",
-            pendingOrders.Count,
-            nameof(OrderStatus.Completed),
-            BatchSize);
+            logger.LogInformation(
+                "Marked {OrderCount} pending order(s) as {Status} (max batch size: {BatchSize}).",
+                successfullyProcessed,
+                nameof(OrderStatus.Completed),
+                BatchSize);
+        }
     }
 }

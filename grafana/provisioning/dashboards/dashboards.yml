@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'OrderFlow Dashboards'
+    orgId: 1
+    folder: 'OrderFlow'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

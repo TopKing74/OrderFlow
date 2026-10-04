@@ -670,14 +670,7 @@
         }
       },
       "System.Text.Encodings.Web/4.7.2": {},
-      "System.Text.Json/9.0.20": {
-        "runtime": {
-          "lib/net9.0/System.Text.Json.dll": {
-            "assemblyVersion": "9.0.0.0",
-            "fileVersion": "9.0.2026.41315"
-          }
-        }
-      },
+      "System.Text.Json/9.0.20": {},
       "System.Threading.Tasks.Extensions/4.5.4": {},
       "System.Windows.Extensions/6.0.0": {
         "dependencies": {

@@ -77,6 +77,9 @@ Request → LoggingBehavior → ValidationBehavior (FluentValidation) → Handle
 | Cache | Redis via `IDistributedCache` (StackExchange.Redis) + System.Text.Json | — |
 | Database | SQL Server 2022 (`mcr.microsoft.com/mssql/server:2022-latest`) | 2022 |
 | Cache server | Redis (`redis:alpine`) | — |
+| Metrics & Monitoring | Prometheus (`prom/prometheus:latest`) | — |
+| Dashboards | Grafana (`grafana/grafana:latest`) | — |
+| Distributed Tracing | Jaeger (`jaegertracing/all-in-one:latest`) & OpenTelemetry | — |
 | API docs | Swashbuckle (Swagger UI) | 9.0 |
 | Containers | Docker Compose | — |
 
@@ -87,7 +90,7 @@ Request → LoggingBehavior → ValidationBehavior (FluentValidation) → Handle
 ### Prerequisites
 
 - [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-- Docker (with Compose) for SQL Server and Redis
+- Docker (with Compose) for local infrastructure services
 
 ### 1) Start the infrastructure
 
@@ -98,8 +101,11 @@ docker compose up -d
 This starts:
 - **SQL Server 2022** on `localhost:1433` (`sa` / `YourStrong!Passw0rd`)
 - **Redis** on `localhost:6379`
+- **Prometheus** on `http://localhost:9090` (configured to scrape `/metrics`)
+- **Grafana** on `http://localhost:3000` (`admin` / `admin` with Prometheus provisioned)
+- **Jaeger UI** on `http://localhost:16686` (OTLP receivers on ports `4317` gRPC and `4318` HTTP)
 
-Wait for both containers to report healthy:
+Wait for containers to report healthy:
 
 ```bash
 docker compose ps
@@ -111,7 +117,7 @@ docker compose ps
 dotnet run --project src/OrderFlow.Api
 ```
 
-The API listens on `http://localhost:5120` (Development profile).
+The API listens on `http://localhost:5120` (Development profile) and exposes Prometheus metrics at `http://localhost:5120/metrics`.
 
 ### Migrations
 
@@ -254,5 +260,7 @@ curl -s http://localhost:5120/api/dashboard/orders | jq
 | GET | `/api/orders/{id}` | `GetOrderByIdQuery` | `200` `OrderDetailsDto` / `404` |
 | GET | `/api/orders` | `GetOrdersListQuery` | `200` `List<OrderSummaryDto>` |
 | GET | `/api/dashboard/orders` | `GetDashboardOrdersQuery` | `200` `List<OrderDashboardReadModel>` |
+| GET | `/health` | Health checks (App, SQL Server, Redis) | `200` / `503` JSON component status + latency |
+| GET | `/metrics` | Prometheus metrics scraping | `200` Prometheus text exposition |
 
 All error responses (400 / 404 / 500) use RFC 9457 ProblemDetails, produced by the .NET 9 `IExceptionHandler` pipeline in `OrderFlow.Api/Middleware`.

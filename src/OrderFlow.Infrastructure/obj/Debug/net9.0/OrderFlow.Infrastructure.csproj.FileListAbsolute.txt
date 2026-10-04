@@ -15,3 +15,4 @@ C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Infrastructure\obj\Debug\net9.0\Order
 C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Infrastructure\obj\Debug\net9.0\refint\OrderFlow.Infrastructure.dll
 C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Infrastructure\obj\Debug\net9.0\OrderFlow.Infrastructure.pdb
 C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Infrastructure\obj\Debug\net9.0\ref\OrderFlow.Infrastructure.dll
+C:\Users\Mr. Adham\OrderFlow\src\OrderFlow.Infrastructure\obj\Debug\net9.0\OrderFlow.Infrastructure.sourcelink.json

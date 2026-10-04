@@ -1,5 +1,10 @@
+using System.Diagnostics;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OpenTelemetry.Trace;
+using OrderFlow.Api.Observability;
+using OrderFlow.Application.Common.Caching;
+using OrderFlow.Application.Common.Interfaces;
 using OrderFlow.Application.Features.Orders.Commands.CreateOrder;
 using OrderFlow.Application.Features.Orders.Queries.GetOrderById;
 using OrderFlow.Application.Features.Orders.Queries.GetOrdersList;
@@ -8,7 +13,11 @@ namespace OrderFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/orders")]
-public sealed class OrdersController(ISender sender) : ControllerBase
+public sealed class OrdersController(
+    ISender sender,
+    OrderFlowTelemetry telemetry,
+    ICacheService cacheService,
+    ILogger<OrdersController> logger) : ControllerBase
 {
     /// <summary>
     /// Creates a new order.
@@ -25,12 +34,34 @@ public sealed class OrdersController(ISender sender) : ControllerBase
         [FromBody] CreateOrderCommand command,
         CancellationToken cancellationToken)
     {
-        var orderId = await sender.Send(command, cancellationToken);
+        using var activity = telemetry.StartCreateOrderActivity();
+        var totalAmount = command.Items.Sum(item => item.Quantity * item.UnitPrice);
 
-        return CreatedAtAction(
-            nameof(GetById),
-            new { id = orderId },
-            new { id = orderId });
+        try
+        {
+            var orderId = await sender.Send(command, cancellationToken);
+
+            activity?.SetTag("order.id", orderId);
+            activity?.SetTag("order.amount", totalAmount);
+
+            telemetry.OrdersCreatedTotal.Add(1);
+            telemetry.PendingOrdersCount.Add(1);
+
+            logger.LogInformation("Order {OrderId} created successfully with amount {Amount}", orderId, totalAmount);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = orderId },
+                new { id = orderId });
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            telemetry.HttpErrorsTotal.Add(1);
+            logger.LogError(ex, "Error processing {OperationName}", OrderFlowTelemetry.CreateOrderOperation);
+            throw;
+        }
     }
 
     /// <summary>
@@ -48,9 +79,41 @@ public sealed class OrdersController(ISender sender) : ControllerBase
         [FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
-        var order = await sender.Send(new GetOrderByIdQuery(id), cancellationToken);
+        using var activity = telemetry.StartGetOrderByIdActivity();
+        activity?.SetTag("order.id", id);
 
-        return Ok(order);
+        try
+        {
+            var cacheKey = CacheKeys.OrderDetails(id);
+            var cached = await cacheService.GetAsync<OrderDetailsDto>(cacheKey, cancellationToken);
+
+            string hitOrMiss;
+            OrderDetailsDto order;
+
+            if (cached is not null)
+            {
+                hitOrMiss = "HIT";
+                order = cached;
+            }
+            else
+            {
+                hitOrMiss = "MISS";
+                order = await sender.Send(new GetOrderByIdQuery(id), cancellationToken);
+            }
+
+            activity?.SetTag("cache.status", hitOrMiss);
+            logger.LogInformation("Cache {CacheStatus} for Order {OrderId}", hitOrMiss, id);
+
+            return Ok(order);
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            telemetry.HttpErrorsTotal.Add(1);
+            logger.LogError(ex, "Error processing {OperationName}", OrderFlowTelemetry.GetOrderByIdOperation);
+            throw;
+        }
     }
 
     /// <summary>
@@ -64,8 +127,32 @@ public sealed class OrdersController(ISender sender) : ControllerBase
     public async Task<ActionResult<List<OrderSummaryDto>>> List(
         CancellationToken cancellationToken)
     {
-        var orders = await sender.Send(new GetOrdersListQuery(), cancellationToken);
+        using var activity = telemetry.StartGetOrdersActivity();
+        var stopwatch = Stopwatch.StartNew();
 
-        return Ok(orders);
+        try
+        {
+            var orders = await sender.Send(new GetOrdersListQuery(), cancellationToken);
+            stopwatch.Stop();
+
+            activity?.SetTag("query.orders_count", orders.Count);
+            activity?.SetTag("query.duration_ms", stopwatch.ElapsedMilliseconds);
+
+            logger.LogInformation(
+                "Retrieved {OrderCount} orders in {ElapsedMilliseconds}ms",
+                orders.Count,
+                stopwatch.ElapsedMilliseconds);
+
+            return Ok(orders);
+        }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            telemetry.HttpErrorsTotal.Add(1);
+            logger.LogError(ex, "Error processing {OperationName}", OrderFlowTelemetry.GetOrdersOperation);
+            throw;
+        }
     }
 }
